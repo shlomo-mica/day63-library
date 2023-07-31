@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<h2>COME TO MY PAGE---->>> {{name}}</h2>
+
+<body>
+     <form action="{{ url_for('hello') }}" method="POST">
+        <select  class="form-select" aria-label="Default select example" name="select">
+          <option selected>Open this select menu</option>
+          <option value=7>7</option>
+          <option value=8>8</option>
+          <option value=9>9</option>
+        </select>
+
+         <button type="submit">Update Rate</button>
+    </form>
+
+        <form>
+          <select onchange="val()" name="fruit" id="fruit">
+            {% for fruit in fruits %}
+            <option value="{{ fruits[fruit] }}">{{ fruit }}</option>
+            {% endfor %}
+          </select>
+
+          <p id="fruit-binding"></p>
+        </form>
+        <script>
+          var selectTag = document.getElementById('fruit')
+          var pTag = document.getElementById('fruit-binding')
+          pTag.innerText = selectTag.value
+          function val() {
+            pTag.innerText = selectTag.value
+          }
+
+        </script>
+    {% for item in list_data %}
+    <div class="row no-gutter">
+        <div class="col-25">'sdfsf'</div>
+        <div class="col-25">"sdffdsf"</div>
+        <div class="col-25">{{ item[2] }}</div>
+        <div class="col-25">{{ item[1] }}</div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>
