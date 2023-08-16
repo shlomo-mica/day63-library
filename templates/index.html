@@ -8,7 +8,7 @@
     <h1> Library  </h1>
     {% for item in var %}
     <ul>
-    <li><h4><a href=""> Delete item</a>{{ item }}<a href="{{url_for('rate',b_name=item[0],c_name=22)}}"> Change Rating</a></h4></li>
+    <li><h4><a href="{{url_for('delete_book',b_name=item[0])}}"> Delete item</a>{{ item }}<a href="{{url_for('rate',b_name=item[0],c_name=22)}}"> Change Rating</a></h4></li>
 
     </ul>
     {% endfor %}

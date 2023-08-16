@@ -137,17 +137,21 @@ def rate(b_name, c_name):
     else:
         print("rate to low try again")
 
-    # return redirect(url_for('home'))
+        return redirect(url_for('home'))
     return render_template("new_page_rate.html", name=request.form.get('select'), b_name=b_name)
 
 
+@app.route('/delete/<b_name>')
 def delete_book(b_name):
-    dee = input("what name to delete??")
-    connnt = sqlite3.connect('mysq.db')
+    # dee = input("what name to delete??")
+    connnt = sqlite3.connect('books_rate.db')
     cursor = connnt.cursor()
-    sql_update_query = """DELETE from people WHERE name = ?"""
-    cursor.execute(sql_update_query, (dee,))
+    sql_update_query = """DELETE from books WHERE title = ?"""
+    cursor.execute(sql_update_query, (b_name,))
+    redirect(url_for("home"))
     connnt.commit()
+    return redirect(url_for('home'))
+
 
 
 if __name__ == "__main__":
