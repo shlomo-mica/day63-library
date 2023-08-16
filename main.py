@@ -35,23 +35,52 @@ with app.app_context():
 #     new_book = Book(id=11, title="Harry Potter", author="J. K. Rowling", rating=9.3)
 #     db.session.add(new_book)
 #     db.session.commit()
-
+#############################################################################################
 # SQLITE3    connect with check_same_thread set to False.
-db22 = sqlite3.connect("new-books.db", check_same_thread=False)
+db22 = sqlite3.connect("books_rate.db", check_same_thread=False)
 cursor = db22.cursor()
 cursor.execute(
-    "CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY, title varchar(250) NOT NULL UNIQUE, author varchar(250) "
+    "CREATE TABLE IF NOT EXISTS books("
+    " title varchar(250) NOT NULL UNIQUE, "
+    "author varchar(250) "
     "NOT NULL, rating FLOATNOT NULL)")
-cursor.execute("INSERT OR IGNORE INTO books VALUES('5', 'Harry Potter', 'J. K. Rowling', '99')")
+cursor.execute("INSERT OR IGNORE INTO books VALUES('Harry Potter', 'J. K. Rowling', '99')")
 db22.commit()
 
 all_books = []
 
 
-@app.route('/')
-def home():
-    test = 'TEST'
-    return render_template('index.html', all_books=all_books, test=test)
+def getAllRows():
+    global connection, row
+    try:
+        connection = sqlite3.connect('books_rate.db')
+        cursor_2 = connection.cursor()
+
+        # print("Connected to SQLite")
+        # ROWID = """SELECT rowid * from books"""
+        sqlite_select_query = """SELECT * from books"""
+        cursor_2.execute(sqlite_select_query)
+        records = cursor_2.fetchall()
+
+        # print("Total rows are:  ", len(records))
+        # print("Printing each row")
+        # for row in records:
+        #
+        #     print("Id: ", row[0])
+        #     print("Name: ", row[1])
+        #     print("Email: ", row[2])
+        #     # print("Salary: ", row[3])
+        #     print("\n")
+        # print("records--", records[3])
+
+        cursor_2.close()
+        return records
+    except sqlite3.Error as error:
+        print("Failed to read data from table", error)
+    finally:
+        if connection:
+            connection.close()
+            print("The Sqlite connection is closed")
 
 
 @app.route("/add", methods=['GET', 'POST'])
@@ -60,36 +89,66 @@ def add():
         book_name = request.form.get('book_name')
         book_author = request.form.get('book_author')
         book_score = request.form.get('book_score')
-        print(book_name, book_author, book_score)
-
-        # add_new_book = [book_name, book_author, book_score]
-        # db.session.add(add_new_book)
-        # db.commit()
+        # print(book_name, book_author, book_score)
 
         new_book_rating = {'book_name_title': book_name,
                            'author': book_author,
                            'book_score': book_score}
         all_books.append(new_book_rating)
 
-        cursor.execute(f"INSERT OR REPLACE INTO books VALUES('5','{book_name}','{book_author}', '{book_score}')")
+        cursor.execute(f"INSERT OR REPLACE INTO books VALUES('{book_name}','{book_author}', '{book_score}')")
         db22.commit()
         return redirect(url_for('home'))
     return render_template('add.html')
 
 
-@app.route('/rate', methods=['GET', 'POST'])
-def hello(name77='GOOD DAY'):
+@app.route('/')
+def home():
+    getAllRows()
+    # print("all books", all_books, getAllRows())
+    var = getAllRows()
+    return render_template('index.html', var=var)
+
+
+list_rate = []
+
+
+@app.route("/hello", methods=['GET', 'POST'])
+def hello():
     if request.method == 'POST':
-        cursor.execute("UPDATE books SET rating = 55 WHERE id = 2")
+        new_rate_value = request.form.get('select')
+        list_rate.append(new_rate_value)
+        print(f"hello function value==", new_rate_value)
+        return new_rate_value
+
+
+@app.route('/rate/<b_name>-<int:c_name>', methods=['GET', 'POST'])
+def rate(b_name, c_name):
+    print(f"book name is={b_name, request.form.get('select')}")
+    print("new value is=", c_name)
+    new_rate_value = request.form.get('select')
+    if c_name > 5:
+        sql_update_query = f"""Update books SET rating =
+                           '{new_rate_value}' WHERE title = 
+                           '{b_name}' """
+        cursor.execute(sql_update_query)
         db22.commit()
-        # cursor.execute(f"INSERT OR REPLACE INTO books ({id == 2}) VALUES ('{name77}')")
-        print(request.form.get('select'))
-        return redirect(url_for('home'))
-    return render_template("new_page_rate.html", name=request.form.get('select'))
+        print("the selecting rate is", new_rate_value)
+    else:
+        print("rate to low try again")
+
+    # return redirect(url_for('home'))
+    return render_template("new_page_rate.html", name=request.form.get('select'), b_name=b_name)
 
 
-# INSERT INTO phonebook(name,phonenumber) VALUES('Alice','704-555-1212')
-#  ON CONFLICT(name) DO UPDATE SET phonenumber=excluded.phonenumber;
+def delete_book(b_name):
+    dee = input("what name to delete??")
+    connnt = sqlite3.connect('mysq.db')
+    cursor = connnt.cursor()
+    sql_update_query = """DELETE from people WHERE name = ?"""
+    cursor.execute(sql_update_query, (dee,))
+    connnt.commit()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -118,3 +177,12 @@ if __name__ == "__main__":
 # for item in all_books:
 #     for i in item:
 #         print(i)
+
+# add_new_book = [book_name, book_author, book_score]
+# db.session.add(add_new_book)
+# db.commit()
+
+
+# cursor.execute(f"INSERT OR REPLACE INTO books ({id == 2}) VALUES ('{name77}')")
+# INSERT INTO phonebook(name,phonenumber) VALUES('Alice','704-555-1212')
+#  ON CONFLICT(name) DO UPDATE SET phonenumber=excluded.phonenumber;

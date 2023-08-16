@@ -2,21 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Library</title>
+    <title color="=red" >Library</title>
   </head>
   <body>
-    <h1>My Library</h1>
+    <h1> Library  </h1>
+    {% for item in var %}
+    <ul>
+    <li><h4><a href=""> Delete item</a>{{ item }}<a href="{{url_for('rate',b_name=item[0],c_name=22)}}"> Change Rating</a></h4></li>
+
+    </ul>
+    {% endfor %}
+
+
     {% if not all_books %}
      <p> LIST IS EMPTY</p>
     {% else %}
       <ul>
         {% for item in all_books %}
-        <li><h3>{{ item['book_name_title'],item['author'],item['book_score'] }}<a href="{{url_for('hello')}}"> Change Rating</a></h3></li>
+        <li><h4>{{ item['book_name_title'],item['author'],item['book_score'] }}<a href="{{url_for('rate')}}"> Change Rating22</a></h4></li>
         {% endfor %}
-        <li>{{ test }}</li>
+
       </ul>
 
-    {% endif %}
+     {% endif %}
     <a href="{{url_for('add')}}">Add New Book</a>
+    {{ name }}
   </body>
+<p><a href="{{ url_for('home')}}">home</a> </p>
 </html>
